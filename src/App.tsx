@@ -22,6 +22,7 @@ import "./App.css"; // 确保导入了CSS
 import Web3 from "web3";
 import ContractABI from "./abi.json";
 
+
 declare global {
     interface Window {
         ethereum?: {
@@ -81,8 +82,12 @@ const CustomLayout = () => {
         }
     };
 
-    const toggle = () => {
-        setCollapsed(!collapsed);
+    const handleMouseEnter = () => {
+      setCollapsed(false);
+    };
+  
+    const handleMouseLeave = () => {
+      setCollapsed(true);
     };
 
     const connectMetaMask = async () => {
@@ -115,7 +120,7 @@ const CustomLayout = () => {
         <Layout style={{ minHeight: "100vh" }}>
             {" "}
             {/* 确保 Layout 充满整个视口高度 */}
-            <Sider trigger={null} collapsible collapsed={collapsed}>
+            <Sider trigger={null} collapsible collapsed={collapsed} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                 <div className="logo">
                     <Avatar size="large" icon={<UserOutlined />} />{" "}
                     {/* 这里是头像 */}
@@ -176,13 +181,6 @@ const CustomLayout = () => {
                 <Header
                     className="site-layout-background"
                     style={{ padding: 0 }}>
-                    {React.createElement(
-                        collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-                        {
-                            className: "trigger",
-                            onClick: toggle,
-                        }
-                    )}
                     {account ? (
                         <Text
                             style={{
