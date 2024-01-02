@@ -291,7 +291,7 @@ const CustomLayout = () => {
         </Menu>
       </Sider>
       <Modal
-        title="输入合约地址"
+        title={"输入合约地址"}
         visible={isV}
         onCancel={() => {setisV(false)}}
         onOk={() => {
@@ -614,10 +614,18 @@ const CustomLayout = () => {
                 color: "black",
               }}
             >
-              {account}
+              {"当前账户: " + account}
             </Text>
           ) : <></>}
-          
+          <Text
+              style={{
+                float: "right",
+                margin: "16px",
+                color: "black",
+              }}
+            >
+              {contract ? "当前合约地址: " + contractAddress : "请输入合约地址"}
+            </Text>
         </Header>
         <Content
           style={{

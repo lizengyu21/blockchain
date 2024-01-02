@@ -144,29 +144,29 @@
 		"name": "getInsuranceRecord",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "uint256[]",
 				"name": "",
-				"type": "uint256"
+				"type": "uint256[]"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "uint256[]",
 				"name": "",
-				"type": "uint256"
+				"type": "uint256[]"
 			},
 			{
-				"internalType": "string",
+				"internalType": "string[]",
 				"name": "",
-				"type": "string"
+				"type": "string[]"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "uint256[]",
 				"name": "",
-				"type": "uint256"
+				"type": "uint256[]"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "uint256[]",
 				"name": "",
-				"type": "uint256"
+				"type": "uint256[]"
 			}
 		],
 		"stateMutability": "view",
@@ -287,6 +287,55 @@
 				"internalType": "bool",
 				"name": "ifreturned",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "orders",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "insurance_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "purchase_time",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "insurance_name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "purchase_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "compensation",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "ifreturn",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "buycount",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
