@@ -218,6 +218,16 @@
 						"internalType": "bool",
 						"name": "hasBeenClaimed",
 						"type": "bool"
+					},
+					{
+						"internalType": "address",
+						"name": "buyer_add",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "ifreturned",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct Insurance_purchase.Insurance[]",
@@ -266,6 +276,16 @@
 			{
 				"internalType": "bool",
 				"name": "hasBeenClaimed",
+				"type": "bool"
+			},
+			{
+				"internalType": "address",
+				"name": "buyer_add",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "ifreturned",
 				"type": "bool"
 			}
 		],
