@@ -54,7 +54,7 @@ const CustomLayout = () => {
 
   const [isV, setisV] = useState(false);
   const [vform] = Form.useForm();
-  
+
   const [isCreateModalVisible, setisCreateModalVisible] = useState(false);
   const [createform] = Form.useForm();
 
@@ -65,7 +65,7 @@ const CustomLayout = () => {
 
   const [getMyInf, setGetMyInf] = useState<any>(null);
   const [myInfModalVisible, setMyInfModalVisible] = useState(false);
-  const [timestampDate, setTimestampDate] = useState<any>(null);
+  const timestampDate:string[] = [];
 
   const showBuyPolicyModal = () => {
     setisBuyPolicyModalVisible(true);
@@ -185,8 +185,9 @@ const CustomLayout = () => {
         console.log(result);
         message.success("最新购买信息获取成功");
         setGetMyInf(result);
-        const timestamp = new Date(1000 * Number(result?.[1]));
-        setTimestampDate(timestamp.toLocaleString());
+        result?.[1]?.map((timestamp: any) => {
+          timestampDate.push(new Date(timestamp * 1000).toLocaleString());
+        })
         setMyInfModalVisible(true);
       } catch (error) {
         console.log(error);
@@ -293,7 +294,9 @@ const CustomLayout = () => {
       <Modal
         title={"输入合约地址"}
         visible={isV}
-        onCancel={() => {setisV(false)}}
+        onCancel={() => {
+          setisV(false);
+        }}
         onOk={() => {
           vform
             .validateFields()
@@ -320,9 +323,9 @@ const CustomLayout = () => {
             .catch((info) => {
               console.log("Validate Failed:", info);
             });
-            
-            console.log(contractAddress);
-            setisV(false);
+
+          console.log(contractAddress);
+          setisV(false);
         }}
       >
         <Form
@@ -332,13 +335,12 @@ const CustomLayout = () => {
           initialValues={{ modifier: "public" }}
         >
           <Form.Item
-                        name="contractAddress"
-                        label="合约地址"
-                        rules={[
-                            { required: true, message: "请输入合约地址!" },
-                        ]}>
-                        <Input />
-                    </Form.Item>
+            name="contractAddress"
+            label="合约地址"
+            rules={[{ required: true, message: "请输入合约地址!" }]}
+          >
+            <Input />
+          </Form.Item>
         </Form>
       </Modal>
       <Modal
@@ -510,14 +512,17 @@ const CustomLayout = () => {
 
                 {output.isSold ? (
                   account === String(output.buyer_add).toLowerCase() ? (
-                    (output.hasBeenClaimed ? <></> : <Button
-                    type="primary"
-                    disabled={!output.isSold || output.ifreturned}
-                    onClick={() => handleReturnPolicy(output.insurance_id)}
-                  >
-                    {output.ifreturned ? "已退款" : "保险退款"}
-                  </Button>)
-                    
+                    output.hasBeenClaimed ? (
+                      <></>
+                    ) : (
+                      <Button
+                        type="primary"
+                        disabled={!output.isSold || output.ifreturned}
+                        onClick={() => handleReturnPolicy(output.insurance_id)}
+                      >
+                        {output.ifreturned ? "已退款" : "保险退款"}
+                      </Button>
+                    )
                   ) : (
                     <Button
                       type="primary"
@@ -555,14 +560,17 @@ const CustomLayout = () => {
               >
                 <p>Has Been Claimed: {output.hasBeenClaimed ? "Yes" : "No"}</p>{" "}
                 {account === String(output.buyer_add).toLowerCase() ? (
-                  (output.ifreturned ? <></> : <Button
-                  type="primary"
-                  disabled={output.hasBeenClaimed}
-                  onClick={() => handleCompensation(output.insurance_id)}
-                >
-                  {output.hasBeenClaimed ? "已理赔" : "保险理赔"}
-                </Button>)
-                  
+                  output.ifreturned ? (
+                    <></>
+                  ) : (
+                    <Button
+                      type="primary"
+                      disabled={output.hasBeenClaimed}
+                      onClick={() => handleCompensation(output.insurance_id)}
+                    >
+                      {output.hasBeenClaimed ? "已理赔" : "保险理赔"}
+                    </Button>
+                  )
                 ) : (
                   <></>
                 )}
@@ -581,31 +589,35 @@ const CustomLayout = () => {
           setMyInfModalVisible(false);
         }}
       >
-        <Card>
-          <p>Insurance ID: {String(getMyInf?.[0])}</p>
-          <p>Purchase Time: {timestampDate}</p>
-          <p>Insurance Name: {String(getMyInf?.[2])}</p>
-          <p>Purchase Amount: {String(getMyInf?.[3])}</p>
-          <p>Compensation: {String(getMyInf?.[4])}</p>
-        </Card>
+        <Collapse accordion>
+          {getMyInf?.[0]?.map((output: any, index: any) => (
+            <Collapse.Panel header={`Index ${index}`} key={index}>
+              <p>Insurance ID: {String(getMyInf?.[0][index])}</p>
+              <p>Purchase Time: {timestampDate[index]}</p>
+              <p>Insurance Name: {String(getMyInf?.[2][index])}</p>
+              <p>Purchase Amount: {String(getMyInf?.[3][index])}</p>
+              <p>Compensation: {String(getMyInf?.[4][index])}</p>
+            </Collapse.Panel>
+          ))}
+        </Collapse>
       </Modal>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={{ padding: 0 }}>
-        {account ? ((
+          {account ? (
             <Button
               onClick={connectMetaMask}
               style={{ float: "right", margin: "16px" }}
             >
               切换 MetaMask 账户
             </Button>
-          )) : ((
+          ) : (
             <Button
               onClick={connectMetaMask}
               style={{ float: "right", margin: "16px" }}
             >
               连接到 MetaMask
             </Button>
-          ))}
+          )}
           {account ? (
             <Text
               style={{
@@ -616,16 +628,18 @@ const CustomLayout = () => {
             >
               {"当前账户: " + account}
             </Text>
-          ) : <></>}
+          ) : (
+            <></>
+          )}
           <Text
-              style={{
-                float: "right",
-                margin: "16px",
-                color: "black",
-              }}
-            >
-              {contract ? "当前合约地址: " + contractAddress : "请输入合约地址"}
-            </Text>
+            style={{
+              float: "right",
+              margin: "16px",
+              color: "black",
+            }}
+          >
+            {contract ? "当前合约地址: " + contractAddress : "请输入合约地址"}
+          </Text>
         </Header>
         <Content
           style={{
