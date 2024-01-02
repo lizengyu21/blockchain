@@ -591,6 +591,21 @@ const CustomLayout = () => {
       </Modal>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={{ padding: 0 }}>
+        {account ? ((
+            <Button
+              onClick={connectMetaMask}
+              style={{ float: "right", margin: "16px" }}
+            >
+              切换 MetaMask 账户
+            </Button>
+          )) : ((
+            <Button
+              onClick={connectMetaMask}
+              style={{ float: "right", margin: "16px" }}
+            >
+              连接到 MetaMask
+            </Button>
+          ))}
           {account ? (
             <Text
               style={{
@@ -601,14 +616,8 @@ const CustomLayout = () => {
             >
               {account}
             </Text>
-          ) : (
-            <Button
-              onClick={connectMetaMask}
-              style={{ float: "right", margin: "16px" }}
-            >
-              连接到 MetaMask
-            </Button>
-          )}
+          ) : <></>}
+          
         </Header>
         <Content
           style={{
