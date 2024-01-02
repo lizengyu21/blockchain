@@ -40,7 +40,7 @@ const { Header, Sider, Content } = Layout;
 const { Text, Title } = Typography;
 
 const contractABI = ContractABI;
-const contractAddress = "";
+const contractAddress = "0xdb2aff4D86cFeDB39015b4792e50c0DD14AA44bD";
 
 const CustomLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -48,7 +48,14 @@ const CustomLayout = () => {
     const [contract, setContract] = useState<any>(null);
     const [isBuyPolicyModalVisible, setisBuyPolicyModalVisible] =
         useState(false);
-    const [form] = Form.useForm();
+    const [buyform] = Form.useForm();
+
+    const [isCreateModalVisible, setisCreateModalVisible] =
+        useState(false);
+    const [createform] = Form.useForm();
+    const [isGetModalVisible, setisGetModalVisible] =
+        useState(false);
+    const [getform] = Form.useForm();
 
     const showBuyPolicyModal = () => {
         setisBuyPolicyModalVisible(true);
@@ -81,6 +88,41 @@ const CustomLayout = () => {
             message.error("智能合约未连接");
         }
     };
+
+    const handleCreatePolicy = async (values: any) => {
+        console.log(values);
+        message.success("创建保险产品成功");
+        if (contract) {
+            try {
+                await contract.methods.CreateInsurance(
+                  values.insurance_id, 
+                  values.insurance_name,  
+                  values.purchase_amount,
+                  values.compensation
+                ).send({ from: account });
+                
+            } catch (error) {
+                console.log(error);
+                message.error("保险创建失败");
+            }
+        }
+    };
+
+    const handleGetPolicy = async (values: any) => {
+      message.success("获取保险产品成功");
+      if (contract) {
+          try {
+            const result = await contract.methods.getInsurancesPaginated(
+                values.start_id, 
+                values.end_id
+              ).call();
+            console.log(result);
+          } catch (error) {
+              console.log(error);
+              message.error("保险获取失败");
+          }
+      }
+  };
 
     const handleMouseEnter = () => {
       setCollapsed(false);
@@ -132,11 +174,11 @@ const CustomLayout = () => {
                         onClick={showBuyPolicyModal}>
                         购买保险
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-                        nav 2
+                    <Menu.Item key="2" icon={<VideoCameraOutlined /> } onClick={() => {setisCreateModalVisible(true)}}>
+                        创建保险产品
                     </Menu.Item>
-                    <Menu.Item key="3" icon={<UploadOutlined />}>
-                        nav 3
+                    <Menu.Item key="3" icon={<UploadOutlined />} onClick={() => {setisGetModalVisible(true)}}>
+                        获取保险产品
                     </Menu.Item>
                 </Menu>
             </Sider>
@@ -145,9 +187,9 @@ const CustomLayout = () => {
                 visible={isBuyPolicyModalVisible}
                 onCancel={handleBuyPolicyCancel}
                 onOk={() => {
-                    form.validateFields()
+                    buyform.validateFields()
                         .then((values) => {
-                            form.resetFields();
+                            buyform.resetFields();
                             handleBuyPolicy(values);
                         })
                         .catch((info) => {
@@ -155,23 +197,117 @@ const CustomLayout = () => {
                         });
                 }}>
                 <Form
-                    form={form}
+                    form={buyform}
                     layout="vertical"
                     name="form_in_modal"
                     initialValues={{ modifier: "public" }}>
-                    <Form.Item
+                    {/* <Form.Item
                         name="contractAddress"
                         label="保险地址"
                         rules={[
                             { required: true, message: "请输入保险地址!" },
                         ]}>
                         <Input />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item
                         name="policyId"
                         label="保险政策ID"
                         rules={[
                             { required: true, message: "请输入保险政策ID!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title="创建保险产品"
+                visible={isCreateModalVisible}
+                onCancel= {() => {
+                    setisCreateModalVisible(false);
+                }}
+                onOk={() => {
+                    createform.validateFields()
+                        .then((values) => {
+                            createform.resetFields();
+                            handleCreatePolicy(values);
+                        })
+                        .catch((info) => {
+                            console.log("Validate Failed:", info);
+                        });
+                }}>
+                <Form
+                    form={createform}
+                    layout="vertical"
+                    name="form_in_modal"
+                    initialValues={{ modifier: "public" }}>
+                    <Form.Item
+                        name="insurance_id"
+                        label="保险ID"
+                        rules={[
+                            { required: true, message: "请输入保险ID!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="insurance_name"
+                        label="保险名称"
+                        rules={[
+                            { required: true, message: "请输入保险名称!" },
+                        ]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="purchase_amount"
+                        label="保险金额"
+                        rules={[
+                            { required: true, message: "请输入保险金额!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="compensation"
+                        label="赔付金额"
+                        rules={[
+                            { required: true, message: "请输入赔付金额!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title="获取保险产品"
+                visible={isGetModalVisible}
+                onCancel= {() => {
+                    setisGetModalVisible(false);
+                }}
+                onOk={() => {
+                    getform.validateFields()
+                        .then((values) => {
+                          getform.resetFields();
+                            handleGetPolicy(values);
+                        })
+                        .catch((info) => {
+                            console.log("Validate Failed:", info);
+                        });
+                }}>
+                <Form
+                    form={getform}
+                    layout="vertical"
+                    name="form_in_modal"
+                    initialValues={{ modifier: "public" }}>
+                    <Form.Item
+                        name="start_id"
+                        label="起始保险ID"
+                        rules={[
+                            { required: true, message: "请输入起始保险ID!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="end_id"
+                        label="终止保险ID"
+                        rules={[
+                            { required: true, message: "请输入终止保险ID!" },
                         ]}>
                         <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
