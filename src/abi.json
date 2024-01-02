@@ -1,16 +1,314 @@
 [
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "myMethod",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    }
+	{
+		"inputs": [],
+		"stateMutability": "payable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "Buy_insurance",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_insurance_id",
+				"type": "uint256"
+			}
+		],
+		"name": "BuyInsurance",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "add",
+				"type": "address"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_insurance_id",
+				"type": "uint256"
+			}
+		],
+		"name": "claimCompensation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_insurance_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_insurance_name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_purchase_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_compensation",
+				"type": "uint256"
+			}
+		],
+		"name": "CreateInsurance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_buyer",
+				"type": "address"
+			}
+		],
+		"name": "ExpiredInsurance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "Get_compensation",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [],
+		"name": "Release_compensation",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_insurance_id",
+				"type": "uint256"
+			}
+		],
+		"name": "ReturnInsurance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "buyer",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "buyerAddress",
+				"type": "address"
+			}
+		],
+		"name": "getInsuranceRecord",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "start",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "end",
+				"type": "uint256"
+			}
+		],
+		"name": "getInsurancesPaginated",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "insurance_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "insurance_name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "purchase_amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "compensation",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isSold",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "hasBeenClaimed",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct Insurance_purchase.Insurance[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "insurances",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "insurance_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "insurance_name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "purchase_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "compensation",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "isSold",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "hasBeenClaimed",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "seller",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "state",
+		"outputs": [
+			{
+				"internalType": "enum Insurance_purchase.State",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "value",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
 ]

@@ -39,7 +39,7 @@ const { Header, Sider, Content } = Layout;
 const { Text, Title } = Typography;
 
 const contractABI = ContractABI;
-const contractAddress = "";
+const contractAddress = "0xA65b6B0edBA714518d08B262f7C6b225454C8CE2";
 
 const CustomLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -47,7 +47,11 @@ const CustomLayout = () => {
     const [contract, setContract] = useState<any>(null);
     const [isBuyPolicyModalVisible, setisBuyPolicyModalVisible] =
         useState(false);
-    const [form] = Form.useForm();
+    const [buyform] = Form.useForm();
+
+    const [isCreateModalVisible, setisCreateModalVisible] =
+        useState(false);
+    const [createform] = Form.useForm();
 
     const showBuyPolicyModal = () => {
         setisBuyPolicyModalVisible(true);
@@ -78,6 +82,25 @@ const CustomLayout = () => {
         } else {
             console.log(contract);
             message.error("智能合约未连接");
+        }
+    };
+
+    const handleCreatePolicy = async (values: any) => {
+        console.log(values);
+        message.success("创建保险产品成功");
+        if (contract) {
+            try {
+                await contract.methods.CreateInsurance({
+                    _insurance_id: window.web3?.utils.toBigInt(values.insurance_id),
+                    _insurance_name: values.insurance_name,
+                    _purchase_amount: window.web3?.utils.toBigInt(values.purchase_amount),
+                    _compensation: window.web3?.utils.toBigInt(values.compensation),
+                }).send({ from: account });
+                
+            } catch (error) {
+                console.log(error);
+                message.error("保险购买失败");
+            }
         }
     };
 
@@ -127,8 +150,8 @@ const CustomLayout = () => {
                         onClick={showBuyPolicyModal}>
                         购买保险
                     </Menu.Item>
-                    <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-                        nav 2
+                    <Menu.Item key="2" icon={<VideoCameraOutlined /> } onClick={() => {setisCreateModalVisible(true)}}>
+                        创建保险产品
                     </Menu.Item>
                     <Menu.Item key="3" icon={<UploadOutlined />}>
                         nav 3
@@ -140,9 +163,9 @@ const CustomLayout = () => {
                 visible={isBuyPolicyModalVisible}
                 onCancel={handleBuyPolicyCancel}
                 onOk={() => {
-                    form.validateFields()
+                    buyform.validateFields()
                         .then((values) => {
-                            form.resetFields();
+                            buyform.resetFields();
                             handleBuyPolicy(values);
                         })
                         .catch((info) => {
@@ -150,23 +173,78 @@ const CustomLayout = () => {
                         });
                 }}>
                 <Form
-                    form={form}
+                    form={buyform}
                     layout="vertical"
                     name="form_in_modal"
                     initialValues={{ modifier: "public" }}>
-                    <Form.Item
+                    {/* <Form.Item
                         name="contractAddress"
                         label="保险地址"
                         rules={[
                             { required: true, message: "请输入保险地址!" },
                         ]}>
                         <Input />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item
                         name="policyId"
                         label="保险政策ID"
                         rules={[
                             { required: true, message: "请输入保险政策ID!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <Modal
+                title="创建保险产品"
+                visible={isCreateModalVisible}
+                onCancel= {() => {
+                    setisCreateModalVisible(false);
+                }}
+                onOk={() => {
+                    createform.validateFields()
+                        .then((values) => {
+                            createform.resetFields();
+                            handleCreatePolicy(values);
+                        })
+                        .catch((info) => {
+                            console.log("Validate Failed:", info);
+                        });
+                }}>
+                <Form
+                    form={createform}
+                    layout="vertical"
+                    name="form_in_modal"
+                    initialValues={{ modifier: "public" }}>
+                    <Form.Item
+                        name="insurance_id"
+                        label="保险ID"
+                        rules={[
+                            { required: true, message: "请输入保险ID!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="insurance_name"
+                        label="保险名称"
+                        rules={[
+                            { required: true, message: "请输入保险名称!" },
+                        ]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="purchase_amount"
+                        label="保险金额"
+                        rules={[
+                            { required: true, message: "请输入保险金额!" },
+                        ]}>
+                        <InputNumber style={{ width: "100%" }} />
+                    </Form.Item>
+                    <Form.Item
+                        name="compensation"
+                        label="赔付金额"
+                        rules={[
+                            { required: true, message: "请输入赔付金额!" },
                         ]}>
                         <InputNumber style={{ width: "100%" }} />
                     </Form.Item>
