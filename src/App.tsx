@@ -42,15 +42,19 @@ const { Header, Sider, Content } = Layout;
 const { Text, Title } = Typography;
 
 const contractABI = ContractABI;
-const contractAddress = "0x33A752f6806D5914cAF3c0a3c6286e596DbFA21F";
+// const contractAddress = "0xe75a6Eb0e0Cd2fFC24a59E5eAd87f946b1278EE9";
 
 const CustomLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [account, setAccount] = useState(null);
   const [contract, setContract] = useState<any>(null);
+  const [contractAddress, setContractAddress] = useState<any>(null);
   const [isBuyPolicyModalVisible, setisBuyPolicyModalVisible] = useState(false);
   const [buyform] = Form.useForm();
 
+  const [isV, setisV] = useState(false);
+  const [vform] = Form.useForm();
+  
   const [isCreateModalVisible, setisCreateModalVisible] = useState(false);
   const [createform] = Form.useForm();
 
@@ -224,12 +228,6 @@ const CustomLayout = () => {
         // 连接成功后设置账户地址
         setAccount(accounts[0]);
         message.success("成功连接到 MetaMask 账户");
-        const myContract = new window.web3.eth.Contract(
-          contractABI,
-          contractAddress
-        );
-        setContract(myContract);
-        console.log(myContract);
       } catch (error) {
         message.error("连接 MetaMask 账户失败");
       }
@@ -251,6 +249,15 @@ const CustomLayout = () => {
           <Avatar size="large" icon={<UserOutlined />} /> {/* 这里是头像 */}
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
+          <Menu.Item
+            key="5"
+            icon={<VideoCameraOutlined />}
+            onClick={() => {
+              setisV(true);
+            }}
+          >
+            输入合约地址
+          </Menu.Item>
           <Menu.Item
             key="1"
             icon={<VideoCameraOutlined />}
@@ -283,6 +290,57 @@ const CustomLayout = () => {
           </Menu.Item>
         </Menu>
       </Sider>
+      <Modal
+        title="输入合约地址"
+        visible={isV}
+        onCancel={() => {setisV(false)}}
+        onOk={() => {
+          vform
+            .validateFields()
+            .then((values) => {
+              vform.resetFields();
+              setContractAddress(values.contractAddress);
+              if (window.ethereum) {
+                window.web3 = new Web3(window.ethereum);
+                try {
+                  const myContract = new window.web3.eth.Contract(
+                    contractABI,
+                    values.contractAddress
+                  );
+                  setContract(myContract);
+                  console.log(myContract);
+                  message.success("成功连接到合约");
+                } catch {
+                  message.error("合约地址错误");
+                }
+              } else {
+                message.error("请安装 MetaMask!");
+              }
+            })
+            .catch((info) => {
+              console.log("Validate Failed:", info);
+            });
+            
+            console.log(contractAddress);
+            setisV(false);
+        }}
+      >
+        <Form
+          form={vform}
+          layout="vertical"
+          name="form_in_modal"
+          initialValues={{ modifier: "public" }}
+        >
+          <Form.Item
+                        name="contractAddress"
+                        label="合约地址"
+                        rules={[
+                            { required: true, message: "请输入合约地址!" },
+                        ]}>
+                        <Input />
+                    </Form.Item>
+        </Form>
+      </Modal>
       <Modal
         title="购买保险"
         visible={isBuyPolicyModalVisible}
@@ -452,13 +510,14 @@ const CustomLayout = () => {
 
                 {output.isSold ? (
                   account === String(output.buyer_add).toLowerCase() ? (
-                    <Button
-                      type="primary"
-                      disabled={!output.isSold || output.ifreturned}
-                      onClick={() => handleReturnPolicy(output.insurance_id)}
-                    >
-                      {output.ifreturned ? "已退款" : "保险退款"}
-                    </Button>
+                    (output.hasBeenClaimed ? <></> : <Button
+                    type="primary"
+                    disabled={!output.isSold || output.ifreturned}
+                    onClick={() => handleReturnPolicy(output.insurance_id)}
+                  >
+                    {output.ifreturned ? "已退款" : "保险退款"}
+                  </Button>)
+                    
                   ) : (
                     <Button
                       type="primary"
@@ -496,13 +555,14 @@ const CustomLayout = () => {
               >
                 <p>Has Been Claimed: {output.hasBeenClaimed ? "Yes" : "No"}</p>{" "}
                 {account === String(output.buyer_add).toLowerCase() ? (
-                  <Button
-                    type="primary"
-                    disabled={output.hasBeenClaimed}
-                    onClick={() => handleCompensation(output.insurance_id)}
-                  >
-                    {output.hasBeenClaimed ? "已理赔" : "保险理赔"}
-                  </Button>
+                  (output.ifreturned ? <></> : <Button
+                  type="primary"
+                  disabled={output.hasBeenClaimed}
+                  onClick={() => handleCompensation(output.insurance_id)}
+                >
+                  {output.hasBeenClaimed ? "已理赔" : "保险理赔"}
+                </Button>)
+                  
                 ) : (
                   <></>
                 )}
